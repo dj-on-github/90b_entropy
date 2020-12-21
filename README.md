@@ -1,7 +1,7 @@
 # 90b_entropy
 Compute the min entropy input requirements for SP800-90B Vetted Conditioning Components
 
-SP800-90B specifices some entropy extraction algorithms.
+SP800-90B specifies some entropy extraction algorithms.
 The algorithms input a number of bits and outputs a fixed size number of bits (like 128 or 256).
 
 The specification also provides equations to compute the min-entropy of the data out of the conditioner, given the min entropy of the input data and some parameters of the algorithm used.
