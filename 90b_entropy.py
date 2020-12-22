@@ -11,8 +11,6 @@ PRECISION = 2048
 out_format = "text"
 #out_format = "csv"
 
-#h_in = (input_entropy_rate * n_in) - 262
-
 def output_entropy(n_in,n_out,nw, h_in):
     n = min(n_out,nw)
     ttninmn = mpf(2.0)**(n_in-n)
