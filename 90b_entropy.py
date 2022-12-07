@@ -6,10 +6,15 @@ import math
 #import matplotlib.pyplot as plt
 from mpmath import *
 
-PRECISION = 2048
+PRECISION = 200
 
 out_format = "text"
 #out_format = "csv"
+
+def close(x,y,epsilon):
+    if abs(x-y) <= epsilon:
+        return True
+    return False
 
 def output_entropy(n_in,n_out,nw, h_in):
     n = min(n_out,nw)
@@ -22,6 +27,10 @@ def output_entropy(n_in,n_out,nw, h_in):
     return -log(max(phi,w),2)
 
 if __name__=="__main__":
+    mp.prec=PRECISION
+
+    epsilon = mpf(2.0)**(-32)
+
 
     if out_format=="csv":
         print("algorithm, output_bits, input_bits, efficiency, min_entropy_input_rate")
@@ -33,19 +42,19 @@ if __name__=="__main__":
                 print("AES-CBC-MAC Extraction, n_out = %d" % n_out)
         elif type=="sha-256":
             nw = mpf(256)
+            n_out = mpf(256)
             if out_format == "text":
                 print("HMAC/SHA-256 Extraction, n_out = %d" % n_out)
-            n_out = mpf(256)
         elif type=="sha-384":
-            if out_format == "text":
-                print("HMAC/SHA-384 Extraction, n_out = %d " % n_out)
             nw = mpf(512)
             n_out = mpf(384)
-        elif type=="sha-512":
             if out_format == "text":
-                print("HMAC/SHA-512 Extraction, n_out = %d" % n_out)
+                print("HMAC/SHA-384 Extraction, n_out = %d " % n_out)
+        elif type=="sha-512":
             nw = mpf(512)
             n_out = mpf(512)
+            if out_format == "text":
+                print("HMAC/SHA-512 Extraction, n_out = %d" % n_out)
         else:
             print("Need a working type")
             exit(1)
@@ -60,18 +69,18 @@ if __name__=="__main__":
                 h_in = x * n_in
                 entropy = output_entropy(n_in, n_out, nw, h_in)
                 ys.append(entropy)
-                if (found == False) and (entropy >= n_out):
+                entropy_rate = entropy/n_out
+                
+                if (found == False) and close(mpf(1.0),entropy_rate,epsilon):
                     found = True
                     if out_format == "text":
-                        print("BITS=",str(n_in).rjust(8),"Bytes=",str(int(n_in/8)).rjust(5), (" efficiency= %3.4f" %(n_out/h_in)).rjust(8),"  Required Min_input_entropy_rate= %3.4f" % x)
+                        print("BITS=",str(n_in).rjust(8),"Bytes=",str(int(n_in/8)).rjust(5), (" h_in= %3.4f" % h_in).rjust(8), (" n_out= %d" % n_out), (" efficiency=(n_out/h_in)= %3.4f" %(n_out/h_in)).rjust(8),"  Required Min_input_entropy_rate= %3.4f" % x)
                     elif out_format == "csv":
                         print(type," , ",int(n_out)," , ",int(n_in)," , ","%3.4f"%(n_out/h_in)," , ","%3.4f"%x) 
-
         #plt.plot(xs,ys,label="L="+str(L))
-
     #plt.legend()
     #plt.show()
 
 
-    
+
 
